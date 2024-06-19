@@ -179,9 +179,14 @@ public class FlutterSecureStorage {
         }
     }
 
+    private fun isSharedPreferencesExists(context: Context, name: String): Boolean {
+        val sharedPrefs = context.getSharedPreferences(name, Context.MODE_PRIVATE)
+        return sharedPrefs.all.isNotEmpty()
+    }
+
     private void initStorageCipher(SharedPreferences source) throws Exception {
         storageCipherFactory = new StorageCipherFactory(source, options);
-        if (getUseEncryptedSharedPreferences()) {
+        if (getUseEncryptedSharedPreferences() || isSharedPreferencesExists(applicationContext, SHARED_PREFERENCES_NAME)) {
             storageCipher = storageCipherFactory.getSavedStorageCipher(applicationContext);
         } else if (storageCipherFactory.requiresReEncryption()) {
             reEncryptPreferences(storageCipherFactory, source);
